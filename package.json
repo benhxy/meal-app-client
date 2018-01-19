@@ -18,6 +18,8 @@
     "react": "^15.0.2",
     "react-cookie": "^0.4.7",
     "react-dom": "^15.0.2",
+    "react-facebook-login": "^3.7.2",
+    "react-google-login": "^3.0.4",
     "react-router": "^2.0.0",
     "react-slick": "^0.13.1",
     "whatwg-fetch": "^1.0.0"

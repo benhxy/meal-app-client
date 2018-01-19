@@ -105,7 +105,7 @@ export default React.createClass( {
 
     return(
       <div className="content-wrapper">
-        <h3>{this.state.compName}</h3>
+        <h3>Meal records</h3>
 
         <MessageBox message={this.state.message}/>
 

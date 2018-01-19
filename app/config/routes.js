@@ -4,7 +4,7 @@ if (typeof require.ensure !== 'function') require.ensure = (d, c) => c(require);
 
 function redirectToLogin(nextState, replace) {
   var path = '/auth/login';
-  if (!localStorage.getItem("RunAppToken")) {
+  if (!localStorage.getItem("MealAppToken")) {
     replace({
       pathname: path,
       state: { nextPathname: nextState.location.pathname }
@@ -80,6 +80,15 @@ const routes = {
     {
       path: '/logout',
       onEnter: handleLogOut
+    },
+
+    {
+      path: '/test/google-login',
+      getComponent(location, cb) {
+        require.ensure([], (require) => {
+          cb(null, require('../components/pages/testing/GoogleLoginTest.js').default)
+        }, 'google-login');
+      }
     },
 /*
 

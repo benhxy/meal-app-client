@@ -19,7 +19,7 @@ export default React.createClass({
   render() {
     return (
         <tr>
-          <td>{this.state.date}</td>
+          <td><div contenteditable="true" onChange={event => this.setState({date: event.target.value})}>{this.state.date}</div></td>
           <td>{this.state.time}</td>
           <td>{this.state.food}</td>
           <td>{this.state.kcal}</td>

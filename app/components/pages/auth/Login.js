@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import axios from 'axios';
+import FacebookLogin from 'react-facebook-login';
+import GoogleLogin from "react-google-login";
+import axios from "axios";
 
 import MessageBox from "../shared/MessageBox";
 
@@ -24,14 +26,26 @@ export default React.createClass({
 
     axios.post("/api/auth/login/", loginData, {crossdomain: true})
       .then(response => {
-        if (response.status < 400) {
-          localStorage.setItem("MealAppToken", response.data.token);
-          localStorage.setItem("MealAppRole", response.data.role);
-          localStorage.setItem("MealAppUserId", response.data.userId);
-          this.props.history.push("/meals");
-        } else {
-          this.setState({message: response.data.message});
-        }
+        localStorage.setItem("MealAppToken", response.data.token);
+        localStorage.setItem("MealAppRole", response.data.role);
+        localStorage.setItem("MealAppUserId", response.data.userId);
+        localStorage.setItem("MealAppExpectedKcal", response.data.expectedKcal);
+        this.props.history.push("/meals");
+      })
+      .catch((err) => this.setState({message: err.response.status + ": " + err.response.data.message}));
+
+  },
+
+  responseFacebook(fbResponse) {
+
+    axios.post("/api/auth/facebook-login", {fbObj: fbResponse})
+      .then(response => {
+        localStorage.setItem("MealAppToken", response.data.token);
+        localStorage.setItem("MealAppRole", response.data.role);
+        localStorage.setItem("MealAppUserId", response.data.userId);
+        localStorage.setItem("MealAppExpectedKcal", response.data.expectedKcal);
+        //this.setState({message: JSON.stringify(response.data)});
+        this.props.history.push("/meals");
       })
       .catch((err) => this.setState({message: err.response.status + ": " + err.response.data.message}));
 
@@ -61,6 +75,18 @@ export default React.createClass({
             <input type="reset" value= "Reset" className="btn blue"/>
 
           </form>
+
+          <div>
+            <FacebookLogin
+              appId="2000714743477067"
+              autoLoad={true}
+              fields="name,email,picture"
+              onClick={this.componentClicked}
+              callback={this.responseFacebook} 
+              />
+          </div>
+          
+
         </div>
     );
   }

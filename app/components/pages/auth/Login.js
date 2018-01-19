@@ -38,7 +38,40 @@ export default React.createClass({
 
   responseFacebook(fbResponse) {
 
-    axios.post("/api/auth/facebook-login", {fbObj: fbResponse})
+    let resObj = JSON.parse(JSON.stringify(fbResponse));
+    let payload = {
+      id: resObj.id,
+      name: resObj.name,
+      email: resObj.email,
+      profilePicUrl: resObj.picture.data.url,
+      accessToken: resObj.accessToken
+    }
+    axios.post("/api/auth/facebook-login", payload)
+      .then(response => {
+        localStorage.setItem("MealAppToken", response.data.token);
+        localStorage.setItem("MealAppRole", response.data.role);
+        localStorage.setItem("MealAppUserId", response.data.userId);
+        localStorage.setItem("MealAppExpectedKcal", response.data.expectedKcal);
+        //this.setState({message: JSON.stringify(response.data)});
+        this.props.history.push("/meals");
+      })
+      .catch((err) => this.setState({message: err.response.status + ": " + err.response.data.message}));
+
+  },
+
+  responseGoogle(gResponse) {
+
+    let resObj = JSON.parse(JSON.stringify(gResponse));
+    let payload = {
+      id: resObj.profileObj.googleId,
+      name: resObj.profileObj.name,
+      email: resObj.profileObj.email,
+      profilePicUrl: resObj.profileObj.imageUrl,
+      accessToken: resObj.tokenObj.access_token,
+      idToken: resObj.tokenObj.id_token
+    }
+
+    axios.post("/api/auth/google-login", payload)
       .then(response => {
         localStorage.setItem("MealAppToken", response.data.token);
         localStorage.setItem("MealAppRole", response.data.role);
@@ -84,6 +117,13 @@ export default React.createClass({
               onClick={this.componentClicked}
               callback={this.responseFacebook} 
               />
+            <span> </span>
+            <GoogleLogin
+              clientId="224684001964-oacus7a8d2j200348v9l4iavf0qu7an5.apps.googleusercontent.com"
+              buttonText="Login with Google"
+              onSuccess={this.responseGoogle}
+              onFailure={this.responseGoogle}
+            />
           </div>
           
 

@@ -31,8 +31,8 @@ const routes = {
     onEnter: redirectToLogin,
     getComponent(location, cb) {
       require.ensure([], (require) => {
-        cb(null, require('../components/pages/RunList.js').default)
-      }, 'RunList');
+        cb(null, require('../components/pages/meals/MealList.js').default)
+      }, 'meal-list');
     }
   },
   childRoutes: [

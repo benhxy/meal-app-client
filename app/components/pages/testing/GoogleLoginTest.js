@@ -13,13 +13,19 @@ export default React.createClass( {
     };
   },
 
-  componentClicked() {
+  responseGoogle(gResponse) {
 
-  },
+    let resObj = JSON.parse(JSON.stringify(gResponse));
+    let payload = {
+      id: resObj.profileObj.googleId,
+      name: resObj.profileObj.name,
+      email: resObj.profileObj.email,
+      profilePicUrl: resObj.profileObj.imageUrl,
+      accessToken: resObj.tokenObj.access_token,
+      idToken: resObj.tokenObj.id_token
+    }
 
-  responseFacebook(fbResponse) {
-
-    axios.post("/api/auth/facebook-login", {fbObj: fbResponse})
+    axios.post("/api/auth/google-login", payload)
       .then(response => {
         localStorage.setItem("MealAppToken", response.data.token);
         localStorage.setItem("MealAppRole", response.data.role);
@@ -36,17 +42,20 @@ export default React.createClass( {
 
     return(
       <div className="content-wrapper">
-        <h3>Facebook login test</h3>
+        <h3>Google login test</h3>
         <MessageBox message={this.state.message} />
-        <FacebookLogin
-          appId="2000714743477067"
-          autoLoad={true}
-          fields="name,email,picture"
-          onClick={this.componentClicked}
-          callback={this.responseFacebook} 
-          />
+        <GoogleLogin
+          clientId="224684001964-oacus7a8d2j200348v9l4iavf0qu7an5.apps.googleusercontent.com"
+          buttonText="Login with Google"
+          onSuccess={this.responseGoogle}
+          onFailure={this.responseGoogle}
+        />
         
       </div>
     );
   }
 });
+
+/*
+
+        */

@@ -3,10 +3,9 @@ import App from '../components/App';
 if (typeof require.ensure !== 'function') require.ensure = (d, c) => c(require);
 
 function redirectToLogin(nextState, replace) {
-  var path = '/auth/login';
   if (!localStorage.getItem("MealAppToken")) {
     replace({
-      pathname: path,
+      pathname: '/auth/login',
       state: { nextPathname: nextState.location.pathname }
     });
   }
@@ -103,30 +102,6 @@ const routes = {
       }
     },
     {
-      path: '/run_new',
-      getComponent(location, cb) {
-        require.ensure([], (require) => {
-          cb(null, require('../components/pages/RunCreate.js').default)
-        }, 'RunCreate');
-      }
-    },
-    {
-      path: '/run_report',
-      getComponent(location, cb) {
-        require.ensure([], (require) => {
-          cb(null, require('../components/pages/RunReport.js').default)
-        }, 'RunReport');
-      }
-    },
-    {
-      path: '/run/:id',
-      getComponent(location, cb) {
-        require.ensure([], (require) => {
-          cb(null, require('../components/pages/RunDetail.js').default)
-        }, 'RunDetail');
-      }
-    },
-    {
       path: '/run_admin',
       getComponent(location, cb) {
         require.ensure([], (require) => {
@@ -134,24 +109,6 @@ const routes = {
         }, 'RunListAdmin');
       }
     },
-    {
-      path: '/run_admin_new',
-      getComponent(location, cb) {
-        require.ensure([], (require) => {
-          cb(null, require('../components/pages/RunCreateAdmin.js').default)
-        }, 'RunCreateAdmin');
-      }
-    },
-    {
-      path: '/run_admin/:id',
-      getComponent(location, cb) {
-        require.ensure([], (require) => {
-          cb(null, require('../components/pages/RunDetailAdmin.js').default)
-        }, 'RunDetailAdmin');
-      }
-    },
-
-    
     {
       path: '/user/:id',
       getComponent(location, cb) {

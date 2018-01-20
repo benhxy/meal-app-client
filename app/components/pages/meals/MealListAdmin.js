@@ -2,9 +2,13 @@ import React, { Component } from 'react';
 import moment from "moment";
 import axios from "axios";
 
-import MealLineItem from "./MealLineItem";
-import MealNewLine from "./MealNewLine";
+import MealLineItemAdmin from "./MealLineItemAdmin";
+import MealNewLineAdmin from "./MealNewLineAdmin";
 import MessageBox from "../shared/MessageBox";
+
+const DISPLAY = 0;
+const EDIT = 1;
+const LOADING = 2;
 
 export default React.createClass( {
 
@@ -24,7 +28,7 @@ export default React.createClass( {
   componentWillMount() {
     //load run list from server, sort and deep copy into states
     //fetch(url, config{method, body{}})
-    axios.get("/api/meals?userId=" + localStorage.getItem("MealAppUserId"), {headers:{token: localStorage.getItem("MealAppToken")}})
+    axios.get("/api/meals", {headers:{token: localStorage.getItem("MealAppToken")}})
       .then(response => {
 
         let sortedList = response.data.meals
@@ -95,7 +99,7 @@ export default React.createClass( {
     const lineItems = this.state.mealListFiltered.map(
       function(item, index) {
         return (
-          <MealLineItem 
+          <MealLineItemAdmin 
             key={item._id} 
             item={item} 
             index={index}
@@ -135,17 +139,18 @@ export default React.createClass( {
         </form>
         <br/>
         <table className="striped">
-          <tbody>
-            <tr>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Food</th>
-              <th>Kcal</th>
-              <th>Actions</th>
-            </tr>
-            {lineItems}
-            <MealNewLine/>
-          </tbody>
+        <tbody>
+          <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Food</th>
+            <th>Kcal</th>
+            <th>User id</th>
+            <th>Actions</th>
+          </tr>
+          {lineItems}
+          <MealNewLineAdmin />
+        </tbody>
         </table>
       </div>
     );

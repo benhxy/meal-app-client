@@ -14,11 +14,18 @@ const App = React.createClass({
   },
 
   componentDidMount() {
-    this.setState({roleName: localStorage.getItem('MealAppRole'), ifLogin: localStorage.getItem('MealAppToken') ? true : false});
+    this.setState({
+    	roleName: localStorage.getItem('MealAppRole'), 
+    	ifLogin: localStorage.getItem('MealAppToken') ? true : false
+    });
   },
 
   componentWillReceiveProps() {
-  	this.setState({showMenu: false, roleName: localStorage.getItem('MealAppRole'), ifLogin: localStorage.getItem('MealAppToken') ? true : false});
+  	this.setState({
+  		showMenu: false, 
+  		roleName: localStorage.getItem('MealAppRole'), 
+  		ifLogin: localStorage.getItem('MealAppToken') ? true : false
+  	});
   },
 
   toggleMenu() {

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {Link} from "react-router";
 import moment from "moment";
+import axios from "axios";
 
 import MessageBox from "../shared/MessageBox";
 
@@ -13,7 +14,7 @@ export default React.createClass({
       food: "",
       kcal: "",
       user: "",
-      status: "EDIT",
+      status: "EDITING",
       message: ""
     };
   },
@@ -21,48 +22,75 @@ export default React.createClass({
   handleSubmit() {
 
     //validate fields
+    if (this.state.date == "" || this.state.time == "" || this.state.food == "") {
+      this.setState({message: "Incomplete information"});
+    }
 
-    alert(JSON.stringify(this.state))
+    //loading status, disable all fields, display loading message
+    this.setState({
+      message: "Saving record...",
+      status: "LOADING"
+    });
 
+    //create meal object
+    let mealObj = {
+      date: this.state.date,
+      time: this.state.time,
+      food: this.state.food,
+      kcal: this.state.kcal
+    }
+
+    this.setState({
+      message: JSON.stringify(mealObj)
+    });
+
+    //post to backend
+    axios.post("/api/meals", mealObj)
+      .then(response => {
+        //refresh page
+        //this.props.history.push("/meals");
+        this.setState({
+          message: response.data.message,
+          status: "EDITING"
+        });
+      })
+      .catch((err) => {
+        this.setState({
+          message: err.response.status + ": " + err.response.data.message,
+          status: "EDITING"
+        });
+      });
 
   },
 
   handleReset() {
-
-    this.setState({
-      date: "",
-      time: "",
-      food: "",
-      kcal: "",
-      user: "",
-      status: "EDIT",
-      message: ""
-    });
-
+    this.setState({message: ""});
+    let newLineFields = document.getElementsByClassName("newLineField");
+    for (let i = 0; i < newLineFields.length; i++) {
+      newLineFields[i]["value"] = "";
+    }
   },
 
   render() {
     return (
         <tr>
           <td>
-            <input type="date" onChange={event => this.setState({date: event.target.value})} />
+            <input type="date" className="newLineField" disabled={this.state.status == "LOADING" ? true : false} onChange={event => this.setState({date: event.target.value})} />
           </td>
           <td>
-            <input type="time" onChange={event => this.setState({time: event.target.value})} />
+            <input type="time" className="newLineField" disabled={this.state.status == "LOADING" ? true : false} onChange={event => this.setState({time: event.target.value})} />
           </td>
           <td>
-            <input type="text" onChange={event => this.setState({food: event.target.value})} />
+            <input type="text" className="newLineField" disabled={this.state.status == "LOADING" ? true : false} onChange={event => this.setState({food: event.target.value})} />
           </td>
           <td>
-            <input type="text" onChange={event => this.setState({kcal: event.target.value})} />
+            <input type="number" className="newLineField" disabled={this.state.status == "LOADING" ? true : false} onChange={event => this.setState({kcal: event.target.value})} />
           </td>
           
           <td>
             <MessageBox message={this.state.message}/>
-            <br/>
-            <div className="btn blue" onClick={this.handleSubmit}>Submit</div>
-            <br/>
-            <div className="btn red" onClick={this.handleReset}>Reset</div>
+            <input type="button" disabled={this.state.status == "LOADING" ? true : false} value="Submit" onClick={this.handleSubmit}/>
+            <input type="button" disabled={this.state.status == "LOADING" ? true : false} value="Reset" onClick={this.handleReset}/>
           </td>
         </tr>
     );

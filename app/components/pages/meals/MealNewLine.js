@@ -45,14 +45,16 @@ export default React.createClass({
     });
 
     //post to backend
-    axios.post("/api/meals", mealObj)
+    axios.post("/api/meals", mealObj, {headers: {token: localStorage.getItem("MealAppToken")}})
       .then(response => {
         //refresh page
-        //this.props.history.push("/meals");
+        /*
         this.setState({
           message: response.data.message,
           status: "EDITING"
         });
+        */
+        this.props.history.push("/meals");
       })
       .catch((err) => {
         this.setState({
@@ -98,13 +100,5 @@ export default React.createClass({
 });
 
 /*
-issues:
-1) why is MessageBox not rendered?
-2) why is onChange not triggered?
-
-<p contentEditable={true} onChange={event => alert("Hello")}>
-            {this.state.date}
-            </p>
-
 
 */

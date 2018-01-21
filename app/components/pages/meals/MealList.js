@@ -5,6 +5,7 @@ import axios from "axios";
 import MealLineItem from "./MealLineItem";
 import MealNewLine from "./MealNewLine";
 import MessageBox from "../shared/MessageBox";
+import TodayEnergyMessageBox from "./TodayEnergyMessageBox";
 
 export default React.createClass( {
 
@@ -26,7 +27,7 @@ export default React.createClass( {
   },
 
   handleOnlineRefresh() {
-    //load run list from server, sort and deep copy into states
+    //load list from server, sort and deep copy into states
     axios.get("/api/meals?userId=" + localStorage.getItem("MealAppUserId"), {headers:{token: localStorage.getItem("MealAppToken")}})
       .then(response => {
 
@@ -166,6 +167,9 @@ export default React.createClass( {
 
         <MessageBox message={this.state.message}/>
 
+        <TodayEnergyMessageBox mealList={this.state.mealList} />
+
+
         <div>
           <label>From date (YYYY-MM-DD)</label> <span> </span>
           <input className="filter" type="date" name="fromDate" onChange={event => this.setState({fromDate: event.target.value})}/>
@@ -201,12 +205,10 @@ export default React.createClass( {
               <th>Actions</th>
             </tr>
             {this.state.mealListFiltered.map(
-              function(item, index) {
+              function(item) {
                 return (
                   <MealLineItem
                     item={item}
-                    key={item._id}
-                    index={index}
                     handleDeleteRefresh={this.handleDeleteRefresh}
                     handleUpdateRefresh={this.handleUpdateRefresh} 
                     />

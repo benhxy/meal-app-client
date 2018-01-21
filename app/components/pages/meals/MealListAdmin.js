@@ -2,13 +2,9 @@ import React, { Component } from 'react';
 import moment from "moment";
 import axios from "axios";
 
-import MealLineItemAdmin from "./MealLineItemAdmin";
-import MealNewLineAdmin from "./MealNewLineAdmin";
+import MealLineItem from "./MealLineItem";
+import MealNewLine from "./MealNewLine";
 import MessageBox from "../shared/MessageBox";
-
-const DISPLAY = 0;
-const EDIT = 1;
-const LOADING = 2;
 
 export default React.createClass( {
 
@@ -25,9 +21,12 @@ export default React.createClass( {
     };
   },
 
-  componentWillMount() {
-    //load run list from server, sort and deep copy into states
-    //fetch(url, config{method, body{}})
+  componentDidMount() {
+    this.handleOnlineRefresh();
+  },
+
+  handleOnlineRefresh() {
+    //load list from server, sort and deep copy into states
     axios.get("/api/meals", {headers:{token: localStorage.getItem("MealAppToken")}})
       .then(response => {
 
@@ -35,9 +34,9 @@ export default React.createClass( {
         .sort(
           function compare(a, b) {
             if (moment(a.date) == moment(b.date)) {
-              if (a.time == b.time) {
+              if (moment(a.time) == moment(b.time)) {
                 return 0;
-              } else if (a.time > b.time) {
+              } else if (moment(a.time) > moment(b.time)) {
                 return -1;
               } else {
                 return 1;
@@ -52,60 +51,114 @@ export default React.createClass( {
 
         this.setState({
           mealList: JSON.parse(JSON.stringify(sortedList)),
-          mealListFiltered: JSON.parse(JSON.stringify(sortedList))
+          mealListFiltered: JSON.parse(JSON.stringify(sortedList)),
+          message: ""
         });
 
       })
       .catch((err) => this.setState({message: err.response.status + ": " + err.response.data.message}));
-
   },
 
-  handleFilter(event) {
-    //validate filter input, change this.state.runListFiltered
-    event.preventDefault();
+  handleFilter() {
 
     //validate input, control error message
-    if (this.state.fromDate != "" && this.state.toDate != "" && moment(this.state.fromDate) >= moment(this.state.toDate)) {
+    if (this.state.fromDate != "" 
+      && this.state.toDate != "" 
+      && moment(this.state.fromDate) > moment(this.state.toDate)) {
       this.setState({message: "From date must be earlier than To date"});
       return;
     }
-    if (this.state.fromTime != "" && this.state.toTime != "" && this.state.fromTime >= this.state.toTime) {
+    if (this.state.fromTime != "" 
+      && this.state.toTime != "" 
+      && moment(this.state.fromTime) > moment(this.state.toTime)) {
       this.setState({message: "From time must be earlier than To time"});
       return;
     }
-    this.setState({message: ""});
 
     //filter result
     let filteredResult = [];
-    this.state.mealList.forEach(
-      function(item) {
-        if (moment(item.date) >= moment(this.state.fromDate) && 
-          moment(item.date) <= moment(this.state.toDate) &&
-          item.time >= this.state.fromTime &&
-          item.time <= this.state.toTime) {
-          filteredResult.push(item);
-        }
+    this.state.mealList.forEach(item => {
+      if (this.state.fromDate != "" && moment(item.date) < moment(this.state.fromDate)) {
+        return;
       }
-    );
-    this.setState({runListFiltered: filteredResult});
+      if (this.state.toDate != "" && moment(item.date) > moment(this.state.toDate)) {
+        return;
+      }
+      if (this.state.fromTime != "" && moment(item.time) < moment(this.state.fromTime)) {
+        return;
+      }
+      if (this.state.fromTime != "" && moment(item.time) > moment(this.state.toTime)) {
+        return;
+      }
+      filteredResult.push(item);
+    });
+
+    this.setState({mealListFiltered: filteredResult});
   },
 
-  handleResetFilter(event) {
-    event.preventDefault();
-    this.setState({mealListFiltered: JSON.parse(JSON.stringify(this.state.mealList))});
+  handleResetFilter() {
+    this.setState({
+      mealListFiltered: mealList,
+      message: ""
+    });
+    let filters = document.getElementsByClassName("filter");
+    for (let i = 0; i < filters.length; i++) {
+      filters[i].value = "";
+    }
+  },
+
+  handleDeleteRefresh(childId) {
+    let mealListCopy = [];
+    this.state.mealList.forEach(item => {
+      if (item._id == childId) {
+        console.log("found")
+        return;
+      } else {
+        mealListCopy.push(item);
+      }
+    });
+    this.setState({
+      mealList: mealListCopy,
+      mealListFiltered: mealListCopy,
+      message: "Record deleted"
+    });
+  },
+
+  handleUpdateRefresh(childId, childObj) {
+    let mealListCopy = [];
+    this.state.mealList.forEach(item => {
+      if (item._id == childId) {
+        let updatedItem = {
+          _id: item._id,
+          user: item.user,
+          date: childObj.date,
+          time: childObj.time,
+          food: childObj.food,
+          kcal: childObj.kcal
+        }
+        mealListCopy.push(updatedItem);
+      } else {
+        mealListCopy.push(item);
+      }
+    });
+    this.setState({
+      mealList: mealListCopy,
+      mealListFiltered: mealListCopy,
+      message: "Record updated"
+    });
+  },
+
+  handleCreateRefresh(childObj) {
+    let mealListCopy = this.state.mealList;
+    mealListCopy.push(childObj);
+    this.setState({
+      mealList: mealListCopy,
+      mealListFiltered: mealListCopy,
+      message: "Record created"
+    });
   },
 
   render() {
-    const lineItems = this.state.mealListFiltered.map(
-      function(item, index) {
-        return (
-          <MealLineItemAdmin 
-            key={item._id} 
-            item={item} 
-            index={index}
-            />);
-      }
-    );
 
     return(
       <div className="content-wrapper">
@@ -113,46 +166,65 @@ export default React.createClass( {
 
         <MessageBox message={this.state.message}/>
 
-        <form onSubmit={this.handleFilter}>
+        <div>
+          <label>From date (YYYY-MM-DD)</label> <span> </span>
+          <input className="filter" type="date" name="fromDate" onChange={event => this.setState({fromDate: event.target.value})}/>
+          <br/>
+          <label>To date (YYYY-MM-DD)</label> <span> </span>
+          <input className="filter" type="date" name="toDate" onChange={event => this.setState({toDate: event.target.value})}/>
+          <br/>
+          <label>From time (HH:MM)</label> <span> </span>
+          <input className="filter" type="time" name="fromTime" onChange={event => this.setState({fromTime: event.target.value})}/>
+          <br/>
+          <label>To time (HH:MM)</label> <span> </span>
+          <input className="filter" type="time" name="toTime" onChange={event => this.setState({toTime: event.target.value})}/>
 
-          <div className="input-field">
-            <p>From date (YYYY-MM-DD)</p>
-            <input type="date" name="fromDate" onChange={event => this.setState({fromDate: event.target.value})}/>
-          </div>
-          <div className="input-field">
-            <p>To date (YYYY-MM-DD)</p>
-            <input type="date" name="toDate" onChange={event => this.setState({toDate: event.target.value})}/>
-          </div>
-          <div className="input-field">
-            <p>From time (HH:MM)</p>
-            <input type="time" name="fromTime" onChange={event => this.setState({fromTime: event.target.value})}/>
-          </div>
-          <div className="input-field">
-            <p>To time (HH:MM)</p>
-            <input type="time" name="toTime" onChange={event => this.setState({toTime: event.target.value})}/>
-          </div>
+        </div>
 
-          <input type="submit" value= "Filter" className="btn red"/>
-          <span> </span>
-          <div className="btn blue" onClick={this.handleResetFilter}>Reset</div>
-
-        </form>
         <br/>
+
+        <div>
+          <input type="button" value="Filter" onClick={this.handleFilter} />
+          <input type="button" value="Reset" onClick={this.handleResetFilter} />
+          <input type="button" value="Online refresh" onClick={this.handleOnlineRefresh} />
+        </div>
+
+        <br/>
+
         <table className="striped">
-        <tbody>
-          <tr>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Food</th>
-            <th>Kcal</th>
-            <th>User id</th>
-            <th>Actions</th>
-          </tr>
-          {lineItems}
-          <MealNewLineAdmin />
-        </tbody>
+          <tbody>
+            <tr>
+              <th>User ID</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Food</th>
+              <th>Kcal</th>
+              <th>Actions</th>
+            </tr>
+            {this.state.mealListFiltered.map(
+              function(item, index) {
+                return (
+                  <MealLineItem
+                    item={item}
+                    key={item._id}
+                    index={index}
+                    handleDeleteRefresh={this.handleDeleteRefresh}
+                    handleUpdateRefresh={this.handleUpdateRefresh} 
+                    />
+                );
+              }.bind(this)
+            )}
+            <MealNewLine handleCreateRefresh={this.handleCreateRefresh} />
+          </tbody>
         </table>
       </div>
     );
   }
 });
+
+
+/*
+
+
+
+*/

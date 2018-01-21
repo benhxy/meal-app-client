@@ -28,6 +28,7 @@ export default React.createClass({
     axios.put(url, payload, {headers: {token: localStorage.getItem("MealAppToken")}})
       .then(response => {
         this.props.handleUpdateRefresh(this.props.item._id, response.data.meal);
+        this.setState({status: "DISPLAY"});
       })
       .catch((err) => {
         this.setState({

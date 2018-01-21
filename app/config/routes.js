@@ -57,7 +57,7 @@ const routes = {
       getComponent(location, cb) {
         require.ensure([], (require) => {
           cb(null, require('../components/pages/users/CreateUserByAdmin.js').default)
-        }, 'new-user');
+        }, 'create-user');
       }
     },
     {
@@ -72,8 +72,8 @@ const routes = {
       path: '/users/:id',
       getComponent(location, cb) {
         require.ensure([], (require) => {
-          cb(null, require('../components/pages/users/UserProfile.js').default)
-        }, 'user-profile');
+          cb(null, require('../components/pages/users/EditUserByAdmin.js').default)
+        }, 'edit-user');
       }
     },
     {

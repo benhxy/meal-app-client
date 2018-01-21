@@ -8,7 +8,6 @@ export default React.createClass(  {
 
    getInitialState() {
     return {
-      id: this.props.params.id,
       name: "",
       password: "",
       role: "",
@@ -18,9 +17,9 @@ export default React.createClass(  {
     }
   },
 
-  componentWillMount() {
+  componentDidMount() {
 
-    let url = `/api/user?userId=` + this.state.id;
+    let url = `/api/user?userId=` + this.props.params.id;
     axios.get(url, {headers:{token: localStorage.getItem("MealAppToken")}})
       .then((response) => {
         this.setState({message: JSON.stringify(response.data.user)});
@@ -125,7 +124,7 @@ export default React.createClass(  {
         } else {
           //error from server
           this.setState({warning: response.data.message});
-        
+        }
       })
       .catch((err) => {
         this.setState({warning: err});
@@ -135,7 +134,7 @@ export default React.createClass(  {
   render() {
     return (
         <div>
-          <h3>Meal records</h3>
+          <h3>User profile</h3>
 
           <MessageBox message={this.state.message}/>
 
@@ -154,12 +153,8 @@ export default React.createClass(  {
 
           </div>
 
-          <a href="javascript:;" className="btn blue" onClick={this.handleSubmit}>Submit</a>
-          <span>  </span>
-          <Link to="/run" className="btn blue">Cancel</Link>
-          <span>  </span>
-          <a href="javascript:;" className="btn red" onClick={this.handleDelete}>Delete</a>
-          </form>
+
+
         </div>
     );
   }

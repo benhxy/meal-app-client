@@ -53,11 +53,11 @@ const routes = {
       }
     },
     {
-      path: '/admin/create-user',
+      path: '/new-user',
       getComponent(location, cb) {
         require.ensure([], (require) => {
           cb(null, require('../components/pages/users/CreateUserByAdmin.js').default)
-        }, 'admin-create-user');
+        }, 'new-user');
       }
     },
     {
@@ -69,6 +69,22 @@ const routes = {
       }
     },
     {
+      path: '/users/:id',
+      getComponent(location, cb) {
+        require.ensure([], (require) => {
+          cb(null, require('../components/pages/users/UserProfile.js').default)
+        }, 'user-profile');
+      }
+    },
+    {
+      path: '/profile',
+      getComponent(location, cb) {
+        require.ensure([], (require) => {
+          cb(null, require('../components/pages/users/UserProfile.js').default)
+        }, 'user-profile');
+      }
+    },
+    {
       path: '/meals',
       getComponent(location, cb) {
         require.ensure([], (require) => {
@@ -77,17 +93,16 @@ const routes = {
       }
     },
     {
-      path: '/logout',
-      onEnter: handleLogOut
-    },
-
-    {
-      path: '/test/google-login',
+      path: '/all-meals',
       getComponent(location, cb) {
         require.ensure([], (require) => {
-          cb(null, require('../components/pages/testing/GoogleLoginTest.js').default)
-        }, 'google-login');
+          cb(null, require('../components/pages/meals/MealListAdmin.js').default)
+        }, 'meal-list-admin');
       }
+    },
+    {
+      path: '/logout',
+      onEnter: handleLogOut
     },
 /*
 

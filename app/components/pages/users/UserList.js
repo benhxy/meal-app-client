@@ -14,39 +14,31 @@ export default React.createClass(  {
     };
   },
 
-  componentWillMount() {
+  componentDidMount() {
     //load run list from server, sort and deep copy into states
-    axios.get("/api/user/", {headers:{token: localStorage.getItem("MealAppToken")}})
-      .then((response) => {
-        if (response.ok) {
-          let sortedList = response.data.users.sort(
-            function compare(a, b) {
-              if (a.name == b.name) {
-                return 0;
-              }
-              //latest run logs first
-              if (a.name < b.name) {
-                return -1;
-              }
-              return 1;
+    axios.get("/api/users/", {headers:{token: localStorage.getItem("MealAppToken")}})
+      .then(response => {
+        let sortedList = response.data.users.sort(
+          function compare(a, b) {
+            if (a.name == b.name) {
+              return 0;
+            } else if (a.name < b.name) {
+              return -1;
             }
-          );
-          this.setState({userList: sortedList});
-        } else {
-          this.setState({message: response.status + ": " + response.data.message});
-        }
+            return 1;
+          }
+        );
+        this.setState({userList: sortedList});
       })
-      .catch((err) => this.setState({message: JSON.stringify(err)}));
+      .catch((err) => this.setState({message: err.response.status + ": " + err.response.data.message}));
   },
 
   render() {
     const lineItems = this.state.userList.map(
-      function(item, index) {
+      function(item) {
         return (
-          <UserListLineItem 
-            key={item._id} 
-            item={item} 
-            index={index}
+          <UserLineItem 
+            item={item}
             />);
       }
     );

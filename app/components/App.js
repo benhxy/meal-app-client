@@ -7,7 +7,8 @@ require('../../css/app.scss')
 const App = React.createClass({
   getInitialState() {
     return {
-      roleName: "",
+      id: "",
+      role: "",
       ifLogin: false,
       showMenu: false
     }
@@ -15,7 +16,8 @@ const App = React.createClass({
 
   componentDidMount() {
     this.setState({
-    	roleName: localStorage.getItem('MealAppRole'), 
+    	id: localStorage.getItem("MealAppUserId"),
+    	role: localStorage.getItem('MealAppRole'), 
     	ifLogin: localStorage.getItem('MealAppToken') ? true : false
     });
   },
@@ -23,7 +25,7 @@ const App = React.createClass({
   componentWillReceiveProps() {
   	this.setState({
   		showMenu: false, 
-  		roleName: localStorage.getItem('MealAppRole'), 
+  		role: localStorage.getItem('MealAppRole'), 
   		ifLogin: localStorage.getItem('MealAppToken') ? true : false
   	});
   },
@@ -47,17 +49,24 @@ const App = React.createClass({
 			<ul className="menu-list">
 				
 				<li className="menu-item">
-					{this.state.ifLogin ? <span></span> : <Link to="/auth/login" className={"menu-link " + (this.props.location.pathname == "/login" ? "current" : "")}>Login</Link>}
+					{this.state.ifLogin ? <span></span> : <Link to="/auth/login" className={"menu-link " + (this.props.location.pathname == "/auth/ogin" ? "current" : "")}>Login</Link>}
 				</li>
 				<li className="menu-item">
-					{this.state.ifLogin ? <span></span> : <Link to="/auth/signup" className={"menu-link " + (this.props.location.pathname == "/signup" ? "current" : "")}>Sign up</Link>}
+					{this.state.ifLogin ? <span></span> : <Link to="/auth/signup" className={"menu-link " + (this.props.location.pathname == "/auth/signup" ? "current" : "")}>Sign up</Link>}
 				</li>
 
 				<li className="menu-item">
-					{this.state.ifLogin ? <Link to="/users" className={"menu-link " + (this.props.location.pathname == "/users" ? "current" : "")}>User records</Link> : <span></span>}
+					{this.state.ifLogin ? <Link to="/meals" className={"menu-link " + (this.props.location.pathname == "/meals" ? "current" : "")}>Manage meal records</Link> : <span></span>}
 				</li>
 				<li className="menu-item">
-					{this.state.ifLogin ? <Link to="/meals" className={"menu-link " + (this.props.location.pathname == "/meals" ? "current" : "")}>Meal records</Link> : <span></span>}
+					{this.state.ifLogin ? <Link to="/profile" className={"menu-link " + (this.props.location.pathname == "/profile" ? "current" : "")}>Profile</Link> : <span></span>}
+				</li>
+
+				<li className="menu-item">
+					{(this.state.ifLogin && (this.state.role == "userManager" || this.state.role == "admin")) ? <Link to="/users" className={"menu-link " + (this.props.location.pathname == "/users" ? "current" : "")}>Manage users</Link> : <span></span>}
+				</li>
+				<li className="menu-item">
+					{(this.state.ifLogin && (this.state.role == "userManager" || this.state.role == "admin")) ? <Link to="/all-meals" className={"menu-link " + (this.props.location.pathname == "/all-meals" ? "current" : "")}>Manage all users' meal records</Link> : <span></span>}
 				</li>
 
 

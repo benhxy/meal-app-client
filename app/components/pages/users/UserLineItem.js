@@ -11,9 +11,7 @@ export default React.createClass(  {
     return (
 
         <tr>
-          <Link to={`/user/${user._id}`}>
-            <td>{user.name}</td>
-          </Link>
+          <Link to={`/users/${user._id}`}><td>{user.name}</td></Link>
           <td>{user.email}</td>
           <td>{user.accountType}</td>
           <td>{user.role}</td>
@@ -23,3 +21,11 @@ export default React.createClass(  {
     );
   }
 });
+
+/*
+
+
+            
+          
+
+          */

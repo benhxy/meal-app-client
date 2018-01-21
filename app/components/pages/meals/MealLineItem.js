@@ -19,11 +19,38 @@ export default React.createClass({
   },
 
   handleSave(){
-
+    let url = "/api/meals?mealId=" + this.props.item._id;
+    let payload = {
+      date: this.state.date,
+      time: this.state.time,
+      food: this.state.food,
+      kcal: this.state.kcal,
+    }
+    axios.put(url, payload, {headers: {token: localStorage.getItem("MealAppToken")}})
+      .then(response => {
+        this.props.handleUpdateRefresh(this.props.item._id, response.data.meal);
+      })
+      .catch((err) => {
+        this.setState({
+          message: err.response.status + ": " + err.response.data.message,
+          status: "EDITING"
+        });
+      });
   },
 
   handleDelete(){
-
+    console.log(this.props.item._id);
+    let url = "/api/meals?mealId=" + this.props.item._id;
+    axios.delete(url, {headers: {token: localStorage.getItem("MealAppToken")}})
+      .then(response => {
+        this.props.handleDeleteRefresh(this.props.item._id);
+      })
+      .catch((err) => {
+        this.setState({
+          message: err.response.status + ": " + err.response.data.message,
+          status: "EDITING"
+        });
+      });
   },
 
   render() {
@@ -92,8 +119,16 @@ export default React.createClass({
               type="button"
               hidden={this.state.status == "DISPLAY" ? true : false}
               disabled={this.state.status == "LOADING" ? true : false} 
-              value="cancel"
-              onClick={event => this.setState({status: "DISPLAY"})}/>
+              value="Cancel"
+              onClick={event => this.setState({
+                date: this.props.item.date,
+                time: this.props.item.time,
+                food: this.props.item.food,
+                kcal: this.props.item.kcal,
+                user: this.props.item.user,
+                status: "DISPLAY",
+                message: ""
+              })}/>
           </td>
         </tr>
     );

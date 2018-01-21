@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Link} from "react-router";
+import {Link, browserHistory} from "react-router";
 import moment from "moment";
 import axios from "axios";
 
@@ -13,7 +13,6 @@ export default React.createClass({
       time: "",
       food: "",
       kcal: "",
-      user: "",
       status: "EDITING",
       message: ""
     };
@@ -24,6 +23,7 @@ export default React.createClass({
     //validate fields
     if (this.state.date == "" || this.state.time == "" || this.state.food == "") {
       this.setState({message: "Incomplete information"});
+      return;
     }
 
     //loading status, disable all fields, display loading message
@@ -40,21 +40,12 @@ export default React.createClass({
       kcal: this.state.kcal
     }
 
-    this.setState({
-      message: JSON.stringify(mealObj)
-    });
-
     //post to backend
     axios.post("/api/meals", mealObj, {headers: {token: localStorage.getItem("MealAppToken")}})
       .then(response => {
         //refresh page
-        /*
-        this.setState({
-          message: response.data.message,
-          status: "EDITING"
-        });
-        */
-        this.props.history.push("/meals");
+        this.handleReset();
+        this.props.handleCreateRefresh(mealObj);
       })
       .catch((err) => {
         this.setState({

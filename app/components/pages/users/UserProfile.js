@@ -3,36 +3,72 @@ import {Link} from "react-router";
 import axios from "axios";
 
 import MessageBox from "../shared/MessageBox";
+import SocialAccountBox from "./SocialAccountBox";
 
 export default React.createClass(  {
 
    getInitialState() {
     return {
+      hasLocal: false,
+      hasFacebook: false,
+      hasGoogle: false,
+
+      id: "",
       name: "",
+      email: "",
       password: "",
+      expectedKcal: "",
+      profilePic: "",
+
       role: "",
       loginFailCount: "",
-      expectedKcal: "",
+      
+      facebookName: "",
+      facebookEmail: "",
+      facebookId: "",
+      googleName: "",
+      googleEmail: "",
+      googleId: "",
+      
       message: ""
     }
   },
 
   componentDidMount() {
 
-    let url = `/api/user?userId=` + this.props.params.id;
+    let url = `/api/users?userId=` + this.props.params.id;
     axios.get(url, {headers:{token: localStorage.getItem("MealAppToken")}})
       .then((response) => {
-        this.setState({message: JSON.stringify(response.data.user)});
-
+        let userResult = response.data.user;
+/*
+        //define if each account type exists
+        if (userResult.local.email != null && userResult.local.email != undefined) {
+          this.setState({hasLocal: true});
+        }
+        if (userResult.facebook.email != null && userResult.facebook.email != undefined) {
+          this.setState({hasFacebook: true});
+        }
+        if (userResult.google.email != null && userResult.google.email != undefined) {
+          this.setState({hasGoogle: true});
+        }
+*/
+        //load data into state
         this.setState({
-          name: response.data.user.name,
-          password: response.data.message.password,
-          role: response.data.message.role,
+          id: userResult._id,
+          name: userResult.local.name,
+          email: userResult.local.email,
+          expectedKcal: userResult.expectedKcal,
+          profilePic: userResult.profilePic,
+
+          role: userResult.role,
+          loginFailCount: userResult.local.loginFailCount,
+          facebookAccount: userResult.facebook,
+          googleAccount: userResult.google,
+
+          message: JSON.stringify(userResult)
         });
       })
-      .catch((err) => {
-        this.setState({warning: err});
-      });
+      .catch((err) => this.setState({message: err.response.status + ": " + err.response.data.message}));
 
   },
 
@@ -132,30 +168,38 @@ export default React.createClass(  {
   },
 
   render() {
+
     return (
         <div>
           <h3>User profile</h3>
 
           <MessageBox message={this.state.message}/>
 
+          <p>User ID:    {this.state.id}</p>
+
           <div>
-            <label>Name</label> <span> </span>
-            <input className="field" type="text" name="name" onChange={event => this.setState({name: event.target.value})}/>
-            <br/>
-            <label>To date (YYYY-MM-DD)</label> <span> </span>
-            <input className="filter" type="date" name="toDate" onChange={event => this.setState({toDate: event.target.value})}/>
-            <br/>
-            <label>From time (HH:MM)</label> <span> </span>
-            <input className="filter" type="time" name="fromTime" onChange={event => this.setState({message: event.target.value.toString()})}/>
-            <br/>
-            <label>To time (HH:MM)</label> <span> </span>
-            <input className="filter" type="time" name="toTime" onChange={event => this.setState({toTime: event.target.value})}/>
+            <label>Name </label> <span> </span>
+
+            
 
           </div>
-
-
 
         </div>
     );
   }
 });
+
+
+/*
+
+            <input
+              className="field"
+              type="text"
+              value={this.state.name}
+              onChange={event => this.setState({name: event.target.value})}/>
+            <br/>
+
+          <SocialAccountBox account={this.state.facebook} accountType="Facebook account"/>
+          <SocialAccountBox account={this.state.google} accountType="Google account"/>
+
+*/

@@ -37,9 +37,17 @@ export default React.createClass(  {
     axios.get(url, {headers:{token: localStorage.getItem("MealAppToken")}})
       .then((response) => {
         let userResult = response.data.user;
+        //make a copy for reset
         this.setState({userCopy: userResult});
+        //load into state
+        this.updateUserState(userResult);
+      })
+      .catch((err) => this.setState({message: err.response.status + ": " + err.response.data.message}));
+      
+  },
 
-        //define if each account type exists
+  updateUserState(userResult) {
+    //define if each account type exists
         if (userResult.local.email != undefined) {
           this.setState({hasLocal: true});
         }
@@ -81,14 +89,9 @@ export default React.createClass(  {
         }
 
         //load profile pic
-        if (userResult.profilePic != undefined) {
+        if (userResult.profilePic != undefined && userResult.profilePic != "") {
           this.setState({profilePic: userResult.profilePic});
         }
-
-        
-      })
-      .catch((err) => this.setState({message: err.response.status + ": " + err.response.data.message}));
-      
   },
 
   handleUserInfoUpdate() {
@@ -97,6 +100,9 @@ export default React.createClass(  {
       this.setState({message: "Please enter a valid name"});
       return;
     }
+    //lock fields
+    this.setState({status: "LOADING", message: "Saving profile..."});
+
     //create payload
     let url = "/api/users?userId=" + this.state.id;
     const payload = {
@@ -114,24 +120,38 @@ export default React.createClass(  {
           message: response.data.message,
           password: ""
         });
+        //update local storage
+        localStorage.setItem("MealAppExpectedKcal", this.state.expectedKcal);
+
+        //unlock fields
+        this.setState({status: "EDITING", message: "Record updated"});
       })
-      .catch((err) => this.setState({message: err.response.status + ": " + err.response.data.message}));
+      .catch((err) => {
+        this.setState({message: err.response.status + ": " + err.response.data.message});
+        //unlock fields
+        this.setState({status: "EDITING", message: ""});
+      });
 
   },
 
   handleReset() {
-
+    this.updateUserState(this.state.userCopy);
   },
 
   handleSubmit(event) {
     event.preventDefault();
+
+
     //validate file suffix
 
 
-    //validate input
-    
+    //set profile to local image source
 
-    this.putUser();
+
+    //upload file
+
+
+    
   },
 
   render() {

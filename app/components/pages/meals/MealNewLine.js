@@ -45,7 +45,7 @@ export default React.createClass({
       .then(response => {
         //refresh page
         this.handleReset();
-        this.props.handleCreateRefresh(mealObj);
+        this.props.handleCreateRefresh(response.data.meal, response.data.message);
       })
       .catch((err) => {
         this.setState({

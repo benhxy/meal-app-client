@@ -149,13 +149,13 @@ export default React.createClass( {
     });
   },
 
-  handleCreateRefresh(childObj) {
+  handleCreateRefresh(childObj, childMessage) {
     let mealListCopy = this.state.mealList;
     mealListCopy.push(childObj);
     this.setState({
       mealList: mealListCopy,
       mealListFiltered: mealListCopy,
-      message: "Record created"
+      message: childMessage
     });
   },
 

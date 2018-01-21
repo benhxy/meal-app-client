@@ -8,44 +8,30 @@ export default React.createClass( {
     return {
       expectedKcal: localStorage.getItem("MealAppExpectedKcal"),
       todayKcal: 0,
-      boxColor: "green"
+      boxColor: ""
     };
   },
 
-  componentDidMount() {
-  	console.log(JSON.stringify(this.props.mealList))
-  	
-  	let todaySum = 0;
-    this.props.mealList.forEach(item => {
-		  console.log(item)
-	    if (true) {
-	    	todaySum += item.kcal;
-	    }
-	  });
-
-    this.setState({todayKcal: todaySum});
-
+  componentWillReceiveProps(nextProps) {
+    //calculate today's kcal sum
+    let todaySum = 0;
+    nextProps.mealList.forEach(item => {
+      if (moment(item.date).isSame(moment(), "day")) {
+        todaySum += item.kcal;
+      }
+    });
+    //set box style
     if (todaySum <= this.state.expectedKcal) {
-  		this.setState({boxColor: "card-green"});
-  	} else {
-  		this.setState({boxColor: "card"});
-  	}
-  },
-
-  sumTodayKcal() {
-  	//sum today's kcal and update state
-
-
-
-    
-    
-  },
-
-  updateBoxColor() {
-  	
+      this.setState({boxColor: "card-green"});
+    } else {
+      this.setState({boxColor: "card"});
+    }
+    this.setState({todayKcal: todaySum});
   },
 
   render() {
+
+    console.log(JSON.stringify(this.props.mealList))
 
     return(
       <div className={this.state.boxColor}>
@@ -60,5 +46,5 @@ export default React.createClass( {
 });
 
 /*
-console.log(moment(item.date).isSame(moment("2018-01-17"), "day"));
+console.log(;
 */

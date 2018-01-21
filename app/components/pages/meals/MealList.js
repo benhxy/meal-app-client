@@ -111,10 +111,7 @@ export default React.createClass( {
   handleDeleteRefresh(childId) {
     let mealListCopy = [];
     this.state.mealList.forEach(item => {
-      if (item._id == childId) {
-        console.log("found")
-        return;
-      } else {
+      if (item._id != childId) {
         mealListCopy.push(item);
       }
     });
@@ -209,6 +206,7 @@ export default React.createClass( {
                 return (
                   <MealLineItem
                     item={item}
+                    key={item._id}
                     handleDeleteRefresh={this.handleDeleteRefresh}
                     handleUpdateRefresh={this.handleUpdateRefresh} 
                     />

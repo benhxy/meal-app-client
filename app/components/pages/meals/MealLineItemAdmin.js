@@ -12,7 +12,6 @@ export default React.createClass({
       time: this.props.item.time,
       food: this.props.item.food,
       kcal: this.props.item.kcal,
-      user: this.props.item.user,
       status: "DISPLAY",
       message: ""
     };
@@ -56,6 +55,9 @@ export default React.createClass({
   render() {
     return (
         <tr>
+          <td>
+            <p className="displayField">{this.props.item.user}</p>
+          </td>
           <td>
             <p className="displayField" hidden={this.state.status == "DISPLAY" ? false : true}>{moment(this.state.date).format("YYYY-MM-DD")}</p>
             <input

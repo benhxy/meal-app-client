@@ -9,6 +9,7 @@ export default React.createClass({
 
   getInitialState() {
     return {
+      user: "",
       date: "",
       time: "",
       food: "",
@@ -34,6 +35,7 @@ export default React.createClass({
 
     //create meal object
     let mealObj = {
+      user: this.state.user,
       date: this.state.date,
       time: this.state.time,
       food: this.state.food,
@@ -67,6 +69,9 @@ export default React.createClass({
   render() {
     return (
         <tr>
+          <td>
+            <input type="text" className="newLineField" disabled={this.state.status == "LOADING" ? true : false} onChange={event => this.setState({user: event.target.value})} />
+          </td>
           <td>
             <input type="date" className="newLineField" disabled={this.state.status == "LOADING" ? true : false} onChange={event => this.setState({date: event.target.value})} />
           </td>

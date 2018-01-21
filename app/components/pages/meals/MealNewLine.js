@@ -45,6 +45,7 @@ export default React.createClass({
       .then(response => {
         //refresh page
         this.handleReset();
+        this.setState({status: "EDITING"});
         this.props.handleCreateRefresh(response.data.meal, response.data.message);
       })
       .catch((err) => {

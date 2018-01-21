@@ -52,6 +52,7 @@ export default React.createClass(  {
         <table className="striped">
         <tbody>
           <tr>
+            <th>User ID</th>
             <th>Name</th>
             <th>Email</th>
             <th>Account type</th>

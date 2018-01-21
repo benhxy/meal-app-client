@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import moment from "moment";
 import axios from "axios";
 
-import MealLineItem from "./MealLineItem";
-import MealNewLine from "./MealNewLine";
+import MealLineItemAdmin from "./MealLineItemAdmin";
+import MealNewLineAdmin from "./MealNewLineAdmin";
 import MessageBox from "../shared/MessageBox";
 
 export default React.createClass( {
@@ -204,17 +204,15 @@ export default React.createClass( {
             {this.state.mealListFiltered.map(
               function(item, index) {
                 return (
-                  <MealLineItem
+                  <MealLineItemAdmin
                     item={item}
-                    key={item._id}
-                    index={index}
                     handleDeleteRefresh={this.handleDeleteRefresh}
                     handleUpdateRefresh={this.handleUpdateRefresh} 
                     />
                 );
               }.bind(this)
             )}
-            <MealNewLine handleCreateRefresh={this.handleCreateRefresh} />
+            <MealNewLineAdmin handleCreateRefresh={this.handleCreateRefresh} />
           </tbody>
         </table>
       </div>

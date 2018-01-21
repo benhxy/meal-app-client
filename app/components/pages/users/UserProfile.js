@@ -3,7 +3,6 @@ import {Link} from "react-router";
 import axios from "axios";
 
 import MessageBox from "../shared/MessageBox";
-import SocialAccountBox from "./SocialAccountBox";
 
 export default React.createClass(  {
 
@@ -27,6 +26,7 @@ export default React.createClass(  {
       google: "",
       
       status: "EDITING",
+      userCopy: "",
       message: ""
     }
   },
@@ -37,6 +37,7 @@ export default React.createClass(  {
     axios.get(url, {headers:{token: localStorage.getItem("MealAppToken")}})
       .then((response) => {
         let userResult = response.data.user;
+        this.setState({userCopy: userResult});
 
         //define if each account type exists
         if (userResult.local.email != undefined) {
@@ -90,46 +91,47 @@ export default React.createClass(  {
       
   },
 
-  handleSubmit(evt) {
-    evt.preventDefault();
-    //validate data
-    //validate input
+  handleUserInfoUpdate() {
+    //validate fields
     if (this.state.name == "") {
-      this.setState({warning: "Please enter a valid name"});
+      this.setState({message: "Please enter a valid name"});
       return;
     }
-    if (this.state.password == "") {
-      this.setState({warning: "Please enter a password"});
-      return;
+    //create payload
+    let url = "/api/users?userId=" + this.state.id;
+    const payload = {
+      name: this.state.name,
+      expectedKcal: this.state.expectedKcal
     }
-    if (this.state.role !== "user" && this.state.role !== "userManager" && this.state.role !== "admin") {
-      this.setState({warning: "Please enter a role from user, userManager or admin"});
-      return;
+    if (this.state.password != "") {
+      payload.password = this.state.password;
     }
+    console.log(payload);
 
-    this.putUser();
+    axios.put(url, payload, {headers:{token: localStorage.getItem("MealAppToken")}})
+      .then(response => {
+        this.setState({
+          message: response.data.message,
+          password: ""
+        });
+      })
+      .catch((err) => this.setState({message: err.response.status + ": " + err.response.data.message}));
+
   },
 
-  putUser() {
-    const userId = this.state.id;
-    const updatedUser = {
-      name: this.state.name,
-      password: this.state.password,
-      role: this.state.role
-    }
+  handleReset() {
 
-    axios.put(`/api/user/${userId}`, updatedUser, {headers:{token: localStorage.getItem("RunAppToken")}})
-      .then(response => {
-        if (response.data.success) {
-          this.props.history.push("/user");
-        } else {
-          //error from server
-          this.setState({warning: response.data.message});
-        }
-      })
-      .catch((err) => {
-        this.setState({warning: err});
-      });
+  },
+
+  handleSubmit(event) {
+    event.preventDefault();
+    //validate file suffix
+
+
+    //validate input
+    
+
+    this.putUser();
   },
 
   render() {
@@ -158,7 +160,7 @@ export default React.createClass(  {
           <input
             className="localField"
             type="password"
-            value=""
+            value={this.state.password}
             disabled={(this.state.status=="EDITING" ? false : true) || !this.state.hasLocal}
             onChange={event => this.setState({password: event.target.value})} />
           <br/>
@@ -183,7 +185,25 @@ export default React.createClass(  {
               <p>Google email: {this.state.google == undefined ? "N/A" : this.state.google.email}</p>
             </div>
           </div>
-          
+
+          <input
+            type="button"
+            value="Save"
+            onClick={this.handleUserInfoUpdate} />
+          <input
+            type="button"
+            value="Reset"
+            onClick={this.handleReset} />
+          <br/>
+
+          <form>
+            <input
+              type="file"
+              accept="image/*"/>
+            <input
+              type="submit"
+              value="Upload profile picture"/>
+          </form>
         </div>
     );
   }

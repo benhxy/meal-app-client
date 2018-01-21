@@ -3,7 +3,6 @@ import {Link} from "react-router";
 import axios from "axios";
 
 import MessageBox from "../shared/MessageBox";
-import SocialAccountBox from "./SocialAccountBox";
 
 export default React.createClass(  {
 
@@ -192,14 +191,5 @@ export default React.createClass(  {
 
 /*
 
-            <input
-              className="field"
-              type="text"
-              value={this.state.name}
-              onChange={event => this.setState({name: event.target.value})}/>
-            <br/>
-
-          <SocialAccountBox account={this.state.facebook} accountType="Facebook account"/>
-          <SocialAccountBox account={this.state.google} accountType="Google account"/>
 
 */

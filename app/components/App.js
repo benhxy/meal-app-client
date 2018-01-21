@@ -59,7 +59,7 @@ const App = React.createClass({
 					{this.state.ifLogin ? <Link to="/meals" className={"menu-link " + (this.props.location.pathname == "/meals" ? "current" : "")}>Manage meal records</Link> : <span></span>}
 				</li>
 				<li className="menu-item">
-					{this.state.ifLogin ? <Link to="/profile" className={"menu-link " + (this.props.location.pathname == "/profile" ? "current" : "")}>Profile</Link> : <span></span>}
+					{this.state.ifLogin ? <Link to="/profile" className={"menu-link " + (this.props.location.pathname == "/profile" ? "current" : "")}>My profile</Link> : <span></span>}
 				</li>
 
 				<li className="menu-item">

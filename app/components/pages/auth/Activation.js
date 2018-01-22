@@ -15,9 +15,10 @@ export default React.createClass({
   componentDidMount() {
 
     let url = "/api/auth/activate";
+    console.log(this.props)
     let payload = {
-      nonce: this.props.query.nonce,
-      userId: this.props.query.userId
+      nonce: this.props.location.query.nonce,
+      userId: this.props.location.query.userId
     }
     axios.post(url, payload)
       .then(response => {

@@ -3,6 +3,7 @@ import App from '../components/App';
 if (typeof require.ensure !== 'function') require.ensure = (d, c) => c(require);
 
 function redirectToLogin(nextState, replace) {
+  console.log(nextState)
   if (!localStorage.getItem("MealAppToken")) {
     replace({
       pathname: '/auth/login',
@@ -15,6 +16,7 @@ function handleLogOut(nextState, replace) {
   localStorage.removeItem("MealAppToken");
   localStorage.removeItem("MealAppRole");
   localStorage.removeItem("MealAppUserId");
+  localStorage.removeItem("MealAppExpectedKcal");
   replace('/auth/login');
 }
 
@@ -27,7 +29,6 @@ const routes = {
   path: '/',
   component: App,
   indexRoute: {
-    onEnter: redirectToLogin,
     getComponent(location, cb) {
       require.ensure([], (require) => {
         cb(null, require('../components/pages/meals/MealList.js').default)
@@ -54,6 +55,7 @@ const routes = {
     },
     {
       path: '/users',
+      onEnter: redirectToLogin,
       getComponent(location, cb) {
         require.ensure([], (require) => {
           cb(null, require('../components/pages/users/UserList.js').default)
@@ -62,6 +64,7 @@ const routes = {
     },
     {
       path: '/new-user',
+      onEnter: redirectToLogin,
       getComponent(location, cb) {
         require.ensure([], (require) => {
           cb(null, require('../components/pages/users/CreateUserByAdmin.js').default)
@@ -70,6 +73,7 @@ const routes = {
     },
     {
       path: '/users/:id',
+      onEnter: redirectToLogin,
       getComponent(location, cb) {
         require.ensure([], (require) => {
           cb(null, require('../components/pages/users/EditUserByAdmin.js').default)
@@ -78,6 +82,7 @@ const routes = {
     },
     {
       path: '/invite',
+      onEnter: redirectToLogin,
       getComponent(location, cb) {
         require.ensure([], (require) => {
           cb(null, require('../components/pages/admin/Invitation.js').default)
@@ -88,12 +93,13 @@ const routes = {
       path: '/activate',
       getComponent(location, cb) {
         require.ensure([], (require) => {
-          cb(null, require('../components/pages/admin/Activation.js').default)
+          cb(null, require('../components/pages/auth/Activation.js').default)
         }, 'activate');
       }
     },
     {
       path: '/profile',
+      onEnter: redirectToLogin,
       getComponent(location, cb) {
         require.ensure([], (require) => {
           cb(null, require('../components/pages/users/UserProfile.js').default)
@@ -102,6 +108,7 @@ const routes = {
     },
     {
       path: '/meals',
+      onEnter: redirectToLogin,
       getComponent(location, cb) {
         require.ensure([], (require) => {
           cb(null, require('../components/pages/meals/MealList.js').default)
@@ -110,6 +117,7 @@ const routes = {
     },
     {
       path: '/all-meals',
+      onEnter: redirectToLogin,
       getComponent(location, cb) {
         require.ensure([], (require) => {
           cb(null, require('../components/pages/meals/MealListAdmin.js').default)
@@ -120,44 +128,6 @@ const routes = {
       path: '/logout',
       onEnter: handleLogOut
     },
-/*
-
-
-    
-    {
-      path: '/run',
-      getComponent(location, cb) {
-        require.ensure([], (require) => {
-          cb(null, require('../components/pages/RunList.js').default)
-        }, 'RunList');
-      }
-    },
-    {
-      path: '/run_admin',
-      getComponent(location, cb) {
-        require.ensure([], (require) => {
-          cb(null, require('../components/pages/RunListAdmin.js').default)
-        }, 'RunListAdmin');
-      }
-    },
-    {
-      path: '/user/:id',
-      getComponent(location, cb) {
-        require.ensure([], (require) => {
-          cb(null, require('../components/pages/UserDetail.js').default)
-        }, 'UserDetail');
-      }
-    },
-
-    {
-      path: '/about',
-      getComponent(location, cb) {
-        require.ensure([], (require) => {
-          cb(null, require('../components/pages/About.js').default)
-        }, 'About');
-      }
-    },
-*/
     {
       path: '*',
       onEnter: checkUrlExist

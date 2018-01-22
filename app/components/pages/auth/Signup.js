@@ -29,7 +29,7 @@ export default React.createClass({
 
     axios.post("/api/auth/signup/", signupData, {crossdomain: true})
       .then(response => {
-        this.props.history.push("/meals");
+        this.props.history.push("/auth/login");
       })
       .catch((err) => this.setState({message: err.response.status + ": " + err.response.data.message}));
 

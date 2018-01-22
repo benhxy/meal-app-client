@@ -71,7 +71,7 @@ export default React.createClass(  {
 
     return (
         <div>
-          <h3>User profile</h3>
+          <h3>Create user by admin</h3>
 
           <MessageBox message={this.state.message}/>
 

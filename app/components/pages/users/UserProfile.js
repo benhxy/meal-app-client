@@ -15,7 +15,6 @@ export default React.createClass(  {
       id: "",
       expectedKcal: "",
       role: "",
-      loginFailCount: "",
 
       profileUrl: "",
       localFile: "",
@@ -96,7 +95,7 @@ export default React.createClass(  {
 
   handleUserInfoUpdate() {
     //validate fields
-    if (this.state.name == "") {
+    if (this.state.hasLocal && this.state.name == "") {
       this.setState({message: "Please enter a valid name"});
       return;
     }
@@ -152,7 +151,7 @@ export default React.createClass(  {
   handleSubmit(event) {
     event.preventDefault();
     //prepare url
-    let uploadUrl = "/api/images?userId=" + localStorage.getItem("MealAppUserId");
+    let uploadUrl = "/api/images?userId=" + this.state.id;
     //prepare form data
     let formData = new FormData();
     formData.append("file", this.state.localFile);

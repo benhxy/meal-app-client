@@ -18,6 +18,8 @@ export default React.createClass(  {
       loginFailCount: "",
 
       profileUrl: "",
+      localFile: "",
+      imagePreviewUrl: "",
 
       name: "",
       email: "",
@@ -136,17 +138,40 @@ export default React.createClass(  {
     this.updateUserState(this.state.userCopy);
   },
 
+  handleFileSelect(event) {
+    event.preventDefault();
+    this.setState({localFile: event.target.files[0]});
+    let reader = new FileReader();
+    let file = event.target.files[0];
+    reader.addEventListener("load", function () {
+      document.getElementById("profileImg").src = reader.result;
+    }, false);
+    reader.readAsDataURL(file);
+  },
+
   handleSubmit(event) {
     event.preventDefault();
-
-
-    //validate file suffix
-
-
-    //set profile to local image source
-
-
-    //upload file
+    //prepare url
+    let uploadUrl = "/api/images?userId=" + localStorage.getItem("MealAppUserId");
+    //prepare form data
+    let formData = new FormData();
+    formData.append("file", localFile);
+    //prepare headers
+    let axiosConfig = {
+      headers: {
+        "content-type": "multipart/form-data",
+        "token": localStorage.getItem("MealAppToken")
+      }
+    };
+    //upload to backend
+    axios.post(uploadUrl, formData, axiosConfig)
+      .then(response => {
+        //show message
+        this.setState({message: response.data.message});
+        //clear file input field
+        document.getElementById("file").value = "";
+      })
+      .catch((err) => this.setState({message: err.response.status + ": " + err.response.data.message}));
 
     
   },
@@ -213,12 +238,14 @@ export default React.createClass(  {
             onClick={this.handleReset} />
           <br/>
 
-          <img src={this.state.profileUrl}/>
+          <img id="profileImg" src={this.state.profileUrl}/>
 
-          <form>
+          <form onSubmit={this.handleSubmit}>
             <input
               type="file"
-              accept="image/*"/>
+              id="file"
+              accept="image/jpg"
+              onChange={this.handleFileSelect}/>
             <input
               type="submit"
               value="Upload profile picture"/>

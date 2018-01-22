@@ -65,9 +65,8 @@ export default React.createClass(  {
       id: userResult._id,
       expectedKcal: userResult.expectedKcal,
       role: userResult.role,
-      loginFailCount: userResult.local.loginFailCount,
-      profileUrl: "/api/images?imageId=" + userResult.profilePic
-    });
+      loginFailCount: userResult.local.loginFailCount      
+    });  
 
     //load local account data
     if (this.state.hasLocal) {
@@ -90,6 +89,17 @@ export default React.createClass(  {
         google: userResult.google
       });
     }
+
+    //load profile pic url, based on local or social account
+    if (userResult.profilePic != null && userResult.profilePic != undefined) {
+      //get local pic first
+      this.setState({profileUrl: "/api/images?imageId=" + userResult.profilePic});
+    } else if (this.state.hasFacebook) {
+      this.setState({profileUrl: userResult.facebook.profilePicUrl});
+    } else if (this.state.hasGoogle) {
+      this.setState({profileUrl: userResult.google.profilePicUrl});
+    }
+    console.log(this.state.profileUrl);
     
   },
 

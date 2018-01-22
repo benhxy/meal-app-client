@@ -5,7 +5,7 @@ import moment from "moment";
 import UserLineItem from "./UserLineItem";
 import MessageBox from "../shared/MessageBox";
 
-export default React.createClass(  {
+export default React.createClass({
 
   getInitialState() {
     return {
@@ -39,6 +39,7 @@ export default React.createClass(  {
         return (
           <UserLineItem 
             item={item}
+            key={item._id}
             />);
       }
     );

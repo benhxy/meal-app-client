@@ -53,14 +53,6 @@ const routes = {
       }
     },
     {
-      path: '/new-user',
-      getComponent(location, cb) {
-        require.ensure([], (require) => {
-          cb(null, require('../components/pages/users/CreateUserByAdmin.js').default)
-        }, 'create-user');
-      }
-    },
-    {
       path: '/users',
       getComponent(location, cb) {
         require.ensure([], (require) => {
@@ -69,11 +61,35 @@ const routes = {
       }
     },
     {
+      path: '/new-user',
+      getComponent(location, cb) {
+        require.ensure([], (require) => {
+          cb(null, require('../components/pages/users/CreateUserByAdmin.js').default)
+        }, 'create-user');
+      }
+    },
+    {
       path: '/users/:id',
       getComponent(location, cb) {
         require.ensure([], (require) => {
           cb(null, require('../components/pages/users/EditUserByAdmin.js').default)
         }, 'edit-user');
+      }
+    },
+    {
+      path: '/invite',
+      getComponent(location, cb) {
+        require.ensure([], (require) => {
+          cb(null, require('../components/pages/admin/Invitation.js').default)
+        }, 'invite');
+      }
+    },
+    {
+      path: '/activate',
+      getComponent(location, cb) {
+        require.ensure([], (require) => {
+          cb(null, require('../components/pages/admin/Activation.js').default)
+        }, 'activate');
       }
     },
     {

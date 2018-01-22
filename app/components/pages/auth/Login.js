@@ -44,7 +44,8 @@ export default React.createClass({
       name: resObj.name,
       email: resObj.email,
       profilePicUrl: resObj.picture.data.url,
-      accessToken: resObj.accessToken
+      accessToken: resObj.accessToken,
+      profilePicUrl: resObj.picture.url
     }
     axios.post("/api/auth/facebook-login", payload)
       .then(response => {
@@ -68,7 +69,8 @@ export default React.createClass({
       email: resObj.profileObj.email,
       profilePicUrl: resObj.profileObj.imageUrl,
       accessToken: resObj.tokenObj.access_token,
-      idToken: resObj.tokenObj.id_token
+      idToken: resObj.tokenObj.id_token,
+      profilePicUrl: resObj.profileObj.imageUrl
     }
 
     axios.post("/api/auth/google-login", payload)

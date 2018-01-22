@@ -63,6 +63,9 @@ const App = React.createClass({
 				</li>
 
 				<li className="menu-item">
+					{(this.state.ifLogin && (this.state.role == "userManager" || this.state.role == "admin")) ? <Link to="/new-user" className={"menu-link " + (this.props.location.pathname == "/new-user" ? "current" : "")}>Create new user</Link> : <span></span>}
+				</li>
+				<li className="menu-item">
 					{(this.state.ifLogin && (this.state.role == "userManager" || this.state.role == "admin")) ? <Link to="/users" className={"menu-link " + (this.props.location.pathname == "/users" ? "current" : "")}>Manage users</Link> : <span></span>}
 				</li>
 				<li className="menu-item">

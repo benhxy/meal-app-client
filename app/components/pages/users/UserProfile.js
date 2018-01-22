@@ -16,7 +16,8 @@ export default React.createClass(  {
       expectedKcal: "",
       role: "",
       loginFailCount: "",
-      profilePic: "",
+
+      profileUrl: "",
 
       name: "",
       email: "",
@@ -48,50 +49,47 @@ export default React.createClass(  {
 
   updateUserState(userResult) {
     //define if each account type exists
-        if (userResult.local.email != undefined) {
-          this.setState({hasLocal: true});
-        }
-        if (userResult.facebook != undefined) {
-          this.setState({hasFacebook: true});
-        }
-        if (userResult.google != undefined) {
-          this.setState({hasGoogle: true});
-        }
+    if (userResult.local.email != undefined) {
+      this.setState({hasLocal: true});
+    }
+    if (userResult.facebook != undefined) {
+      this.setState({hasFacebook: true});
+    }
+    if (userResult.google != undefined) {
+      this.setState({hasGoogle: true});
+    }
 
-        //load common data into state
-        this.setState({
-          id: userResult._id,
-          expectedKcal: userResult.expectedKcal,
-          role: userResult.role,
-          loginFailCount: userResult.local.loginFailCount
-        });
+    //load common data into state
+    this.setState({
+      id: userResult._id,
+      expectedKcal: userResult.expectedKcal,
+      role: userResult.role,
+      loginFailCount: userResult.local.loginFailCount,
+      profileUrl: "/api/images?imageId=" + userResult.profilePic
+    });
 
-        //load local account data
-        if (this.state.hasLocal) {
-          this.setState({
-            name: userResult.local.name,
-            email: userResult.local.email
-          });
-        }
+    //load local account data
+    if (this.state.hasLocal) {
+      this.setState({
+        name: userResult.local.name,
+        email: userResult.local.email
+      });
+    }
 
-        //load facebook account data
-        if (this.state.hasFacebook) {
-          this.setState({
-            facebook: userResult.facebook
-          });
-        }
+    //load facebook account data
+    if (this.state.hasFacebook) {
+      this.setState({
+        facebook: userResult.facebook
+      });
+    }
 
-        //load local account data
-        if (this.state.hasGoogle) {
-          this.setState({
-            google: userResult.google
-          });
-        }
-
-        //load profile pic
-        if (userResult.profilePic != undefined && userResult.profilePic != "") {
-          this.setState({profilePic: userResult.profilePic});
-        }
+    //load local account data
+    if (this.state.hasGoogle) {
+      this.setState({
+        google: userResult.google
+      });
+    }
+    
   },
 
   handleUserInfoUpdate() {
@@ -150,13 +148,10 @@ export default React.createClass(  {
 
     //upload file
 
-
     
   },
 
   render() {
-
-
 
     return (
         <div>
@@ -164,35 +159,37 @@ export default React.createClass(  {
 
           <MessageBox message={this.state.message}/>
 
-          <p>User ID: {this.state.id}</p>
-          <p>User role: {this.state.role}</p>
+          <div>
+            <p>User ID: {this.state.id}</p>
+            <p>User role: {this.state.role}</p>
 
-          <label>Local name: </label>
-          <input
-            className="localField"
-            type="text"
-            value={this.state.name}
-            disabled={(this.state.status=="EDITING" ? false : true) || !this.state.hasLocal}
-            onChange={event => this.setState({name: event.target.value})} />
+            <label>Local name: </label>
+            <input
+              className="localField"
+              type="text"
+              value={this.state.name}
+              disabled={(this.state.status=="EDITING" ? false : true) || !this.state.hasLocal}
+              onChange={event => this.setState({name: event.target.value})} />
 
-          <br/>
-          <label>New password: </label>
-          <input
-            className="localField"
-            type="password"
-            value={this.state.password}
-            disabled={(this.state.status=="EDITING" ? false : true) || !this.state.hasLocal}
-            onChange={event => this.setState({password: event.target.value})} />
-          <br/>
+            <br/>
+            <label>New password: </label>
+            <input
+              className="localField"
+              type="password"
+              value={this.state.password}
+              disabled={(this.state.status=="EDITING" ? false : true) || !this.state.hasLocal}
+              onChange={event => this.setState({password: event.target.value})} />
+            <br/>
 
-          <label>Planned daily energy intake: </label>
-          <input
-            className="localField"
-            type="number"
-            value={this.state.expectedKcal}
-            disabled={(this.state.status=="EDITING" ? false : true)}
-            onChange={event => this.setState({expectedKcal: event.target.value})} />
-          <br/>
+            <label>Planned daily energy intake: </label>
+            <input
+              className="localField"
+              type="number"
+              value={this.state.expectedKcal}
+              disabled={(this.state.status=="EDITING" ? false : true)}
+              onChange={event => this.setState({expectedKcal: event.target.value})} />
+            <br/>
+          </div>
 
           <div className="card-green">
             <div  className="card-content white-text">
@@ -215,6 +212,8 @@ export default React.createClass(  {
             value="Reset"
             onClick={this.handleReset} />
           <br/>
+
+          <img src={this.state.profileUrl}/>
 
           <form>
             <input

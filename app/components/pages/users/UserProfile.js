@@ -155,7 +155,7 @@ export default React.createClass(  {
     let uploadUrl = "/api/images?userId=" + localStorage.getItem("MealAppUserId");
     //prepare form data
     let formData = new FormData();
-    formData.append("file", localFile);
+    formData.append("file", this.state.localFile);
     //prepare headers
     let axiosConfig = {
       headers: {
